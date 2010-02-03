@@ -1,0 +1,13 @@
+This template will walk you through the creation of a new Rails app with common plugins and gems included and setup.  (Common is defined as "things that I use".)
+
+Includes:
+- exception_notifier
+- factory_girl
+- rspec and rspec-rails
+- cleaning up Rails files
+
+Run with:
+  rails appname -m template.rb
+
+Re-run later with:
+  rake rails:template LOCATION=../template.rb
