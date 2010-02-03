@@ -80,6 +80,7 @@ if y?("Use authlogic?")
   maybe_gem_install "authlogic"
 
   puts
+  puts "###############################################################################################"
   puts "I can now attempt to create a simple authlogic setup."
   puts "You should NOT do this if you already have a users_controller, "
   puts "a user_sessions_controller, a user model, or a user_session model, as they"
@@ -94,6 +95,8 @@ if y?("Use authlogic?")
     maybe_update_file :file => "app/controllers/application_controller.rb", :unless_present => /helper_method :current_user_session, :current_user/,
                       :after => "ActionController::Base", :content => "  helper_method :current_user_session, :current_user"
 
+    puts "\n\nNote: I am turning on filter_parameter_logging in application_controller.rb, but if you asked for \nexception_notifier to be installed, then you should comment this out because at the time of this writing \nexception_notifier has a bug when dealing with filter_parameter_logging.\n"
+    
     maybe_update_file :file => "app/controllers/application_controller.rb", :unless_present => /return \@current_user if defined\?\(@current_user\)/,
                       :before => "end", :content => (<<-CODE).gsub(/\A +| +\Z/, '')
 
@@ -220,6 +223,8 @@ end
   <%= f.check_box :remember_me %><%= f.label :remember_me %><br />
   <br />
   <%= f.submit "Login" %>
+  <br />
+  <%= link_to "Create account", new_user_path %>
 <% end %>
 CODE
 
