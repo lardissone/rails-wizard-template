@@ -29,7 +29,7 @@ end
 
 if y?("Remove README, public/index.html, public/favicon.ico, and public/images/rails.png?")
   %w[README public/index.html public/favicon.ico public/images/rails.png].each do |file|
-    run "rm #{file}" if File.exists?('README')
+    run "rm #{file}" if File.exists?(file)
   end
 end
 
@@ -50,7 +50,7 @@ if y?("Would you like to install exception_notifier?")
 
   if y?("Setup exception_notifier.rb initializer?")
     initializer 'exception_notifier.rb', (<<-CODE).gsub(/^\s+/, '')
-			ExceptionNotifier.email_prefix = "[#{`pwd`.strip.split("/").last}] "
+			ExceptionNotifier.email_prefix = "[#{@root.split('/').last}] "
 			ExceptionNotifier.exception_recipients = %w[#{ask("\nList recipient emails seperated by spaces: ").strip}]
     CODE
   end
@@ -79,7 +79,18 @@ if y?("Use authlogic?")
   gem "authlogic"
   maybe_gem_install "authlogic"
 
-  if y?("Configure a basic authlogic setup?")
+  puts
+  puts "I can now attempt to create a simple authlogic setup."
+  puts "You should NOT do this if you already have a users_controller, "
+  puts "a user_sessions_controller, a user model, or a user_session model, as they"
+  puts "will be DESTROYED.  If you are just creating this Rails app, then this should"
+  puts "hopefully work."
+  puts
+  puts "Code from: http://github.com/binarylogic/authlogic_example"
+  puts
+  puts "(Also, this may hang when run on existing Rails apps with any of the above files in place.)"
+  puts
+  if y?("Should I configure a basic authlogic setup?")
     maybe_update_file :file => "app/controllers/application_controller.rb", :unless_present => /helper_method :current_user_session, :current_user/,
                       :after => "ActionController::Base", :content => "  helper_method :current_user_session, :current_user"
 
@@ -257,6 +268,9 @@ end
 <%= form.label :login %><br />
 <%= form.text_field :login %><br />
 <br />
+<%= form.label :email %><br />
+<%= form.text_field :email %><br />
+<br />
 <%= form.label :password, form.object.new_record? ? nil : "Change password" %><br />
 <%= form.password_field :password %><br />
 <br />
@@ -338,3 +352,7 @@ if y?("Install and configure capistrano?")
   maybe_gem_install "capistrano"
   run "capify ."
 end
+
+puts
+puts "Done running the rails-wizard-template!"
+puts
