@@ -13,7 +13,7 @@ def maybe_update_file(options = {})
   look_for = options[:after] || options[:before] # but not both!
   return if options[:unless_present] && old_contents =~ options[:unless_present]
 
-  if options[:action].nil? || y?("#{options[:action]} to #{options[:file]}?")
+  if options[:action].nil? || y?("Should I #{options[:action]} to #{options[:file]}?")
     File.open(options[:file], "w") do |file|
       file.print old_contents.sub(look_for, "#{look_for}\n#{options[:content]}") if options[:after]
       file.print old_contents.sub(look_for, "#{options[:content]}\n#{look_for}") if options[:before]
@@ -45,7 +45,7 @@ end
 if y?("Would you like to install exception_notifier?")
   plugin 'exception_notifier', :svn => 'http://dev.rubyonrails.org/svn/rails/plugins/exception_notification/'
 
-  maybe_update_file :file => "app/controllers/application_controller.rb", :action => "Add 'include ExceptionNotifiable'",
+  maybe_update_file :file => "app/controllers/application_controller.rb", :action => "add 'include ExceptionNotifiable'",
                     :unless_present => /ExceptionNotifiable/, :after => "ActionController::Base", :content => "  include ExceptionNotifiable"
 
   if y?("Setup exception_notifier.rb initializer?")
@@ -69,6 +69,30 @@ end
 if y?("Use will_paginate?")
   gem 'will_paginate'
   maybe_gem_install "will_paginate"
+end
+
+if y?("Use acts_as_commentable?")
+  plugin "acts_as_commentable", :git => "http://github.com/jackdempsey/acts_as_commentable.git"
+end
+
+if y?("Use acts_as_taggable_on?")
+  plugin "acts_as_taggable_on", :git => "git://github.com/mbleigh/acts-as-taggable-on.git"
+end
+
+if y?("Use webrat for integration testing?")
+  if `which uname && uname -a` =~ /linux/i
+    puts "You appear to be running on Linux.  If you are on a Debian-based system, you should install libxslt1-dev libxml2-dev."
+    if y?("Should I do this now?")
+      run "sudo apt-get install libxslt1-dev libxml2-dev"
+    end
+  end
+
+  gem 'webrat'
+  maybe_gem_install "webrat"
+  if File.exists?("spec/spec_helper.rb")
+    maybe_update_file :file => "spec/spec_helper.rb", :action => "add webrat",
+                      :unless_present => /require 'webrat'/, :after => "require 'spec/rails", :content => "\nrequire 'webrat'\nWebrat.configure do |config|\n  config.mode = :rails\nend"
+  end
 end
 
 if y?("Use formtastic?")
@@ -96,7 +120,7 @@ if y?("Use authlogic?")
                       :after => "ActionController::Base", :content => "  helper_method :current_user_session, :current_user"
 
     puts "\n\nNote: I am turning on filter_parameter_logging in application_controller.rb, but if you asked for \nexception_notifier to be installed, then you should comment this out because at the time of this writing \nexception_notifier has a bug when dealing with filter_parameter_logging.\n"
-    
+
     maybe_update_file :file => "app/controllers/application_controller.rb", :unless_present => /return \@current_user if defined\?\(@current_user\)/,
                       :before => "end", :content => (<<-CODE).gsub(/\A +| +\Z/, '')
 
@@ -226,7 +250,7 @@ end
   <br />
   <%= link_to "Create account", new_user_path %>
 <% end %>
-CODE
+    CODE
 
     file 'app/controllers/users_controller.rb', (<<-CODE).gsub(/\A +| +\Z/, '')
 class UsersController < ApplicationController
