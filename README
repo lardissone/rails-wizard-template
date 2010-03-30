@@ -5,6 +5,8 @@ Includes:
 - factory_girl
 - rspec and rspec-rails
 - cleaning up Rails files
+- jrails
+- nifty-generators
 
 Run with:
   rails appname -m template.rb
