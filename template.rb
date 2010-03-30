@@ -99,6 +99,15 @@ if y?("Use formtastic?")
   plugin "formtastic", :git => "git://github.com/justinfrench/formtastic.git"
 end
 
+if y?("Use nifty-generators? (nifty_layout, nifty_scaffold, nifty_config, nifty_authentication)")
+  gem 'nifty-generators'
+  maybe_gem_install 'nifty-generators'
+end
+
+if y?("Use jrails? (jQuery in rails)")
+  plugin "jrails", :git => "git://github.com/aaronchi/jrails.git"
+end
+
 if y?("Use authlogic?")
   gem "authlogic"
   maybe_gem_install "authlogic"
